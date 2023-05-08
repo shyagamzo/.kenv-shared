@@ -1,0 +1,78 @@
+<div class="h-full" style="gap: 1.5rem">
+    <h1 class="text-center" contenteditable="true">🧺</h1>
+
+    <div class="overflow-auto"
+         v-for="(items, category) in content"
+         v-bind:categoryEmoji="emojifyCategory(category)"
+         :key="category"
+         :data-category="category">
+
+        <div v-for="(itemsInfo, mime) in groupByMime(items)"
+             :key="mime"
+             :data-mimeItemsInfo="itemsInfo">
+
+            <small class="flex justify-center">
+                <template v-if="mime">{{mime}}</template>
+                <template v-else>files & folders</template>
+            </small>
+
+            <ul>
+                <li class="py-1 cursor-pointer"
+                    v-for="(itemInfo, index) in itemsInfo"
+                    :key="itemInfo"
+                    :data-itemInfo="itemInfo" :title="tooltipFor(itemInfo)">
+                    {{emojifyCategory(category)}} {{elipsis(displayItem(category, itemInfo))}}
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const elipsis = (itemInfo) =>
+    {
+        const str = JSON.stringify(itemInfo);
+        const elipsisSeparator = ' ... ';
+
+        return str.length > 24 + elipsisSeparator.length
+            ? str.slice(0, 12) + ' ... ' + str.slice(-12)
+            : str;
+    };
+
+    const emojifyCategory = (category) => ({
+        'files': '📄',
+        'images': '🖼️',
+        'texts': '📝',
+        'htmls': '💻',
+        'uris': '🔗',
+        'others': '📦'
+    }[category] ?? '🤔');
+
+    const tooltipFor = (info) => JSON.stringify(info, null, 2);
+
+    const groupByMime = (categoryItems) => categoryItems.reduce((acc, { mime, info }) =>
+    {
+        (acc[mime] ??= []).push(info);
+
+        return acc;
+    }, {});
+
+    const displayItem = (category, info) =>
+    {
+        switch (category)
+        {
+            case 'files':
+            case 'images':
+                return `${info.name} (${info.size} bytes)`;
+            case 'texts':
+            case 'htmls':
+            case 'uris':
+                return info;
+            case 'others':
+            default:
+                return JSON.stringify(info);
+        }
+    };
+
+</script>
