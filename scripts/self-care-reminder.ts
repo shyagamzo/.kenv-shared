@@ -9,42 +9,25 @@
 import '@johnlindquist/kit';
 import { getRandomItemFromArray } from '../lib/utils';
 import { ChatCompletionState, createChatCompletionStream } from '../lib/open-ai';
+import { codeblock } from '../lib/ui';
 
 const storage = await db({ selfCareReminders: [] });
 
 if (!storage.selfCareReminders?.length)
 {
-    const shouldGenerate = await div({
-        html: md(`
-# 👋🥰 Hi there,
-
-I'm your self-care assistant.  
-In order to do my job, I need to configure myself.
-
-**I'll have to access OpenAI for a second...**  
-**Would you like to do that now?**
-        `.trim()),
-        shortcuts: [
-            { key: 'N', name: '[N]ot right now!', value: 'N', bar: 'right', onPress() { submit('N'); } },
-        ]
-    });
-
-    if (shouldGenerate === 'N')
-        exit();
+    await ensureUserWantsToGeneratePhrases();
 
     const displayProgress = ({ fullText }: ChatCompletionState) =>
     {
         div(md(`
 # Generating motivational phrases...
-\`\`\`json
-${ fullText }
-\`\`\`
+${ codeblock(fullText) }
         `));
-    }
+    };
 
-    setFooter('Generating motivational phrases. Please wait...');
+    setFooter('💖 Generating motivational phrases. Please wait...');
     displayProgress({ fullText: '', currentPart: '' });
-    setLoading(true);
+    setRunning(true);
 
     const parseAndStorePhrases = async (fullText: string) =>
     {
@@ -52,8 +35,9 @@ ${ fullText }
 
         await storage.write();
         
-        setFooter(`Generated ${ storage.selfCareReminders.length } phrases. Press Enter to confirm.`);
-        setLoading(false);
+        setRunning(false);
+        setFooter(`🥰 All set! Generated ${ storage.selfCareReminders.length } phrases.`);
+        setEnter('Close');
     };
 
     const phrasesToProduce = 40;
@@ -77,3 +61,26 @@ notify({
     title: "🥰 Self Care Reminder",
     message: getRandomItemFromArray(storage.selfCareReminders)
 });
+
+async function ensureUserWantsToGeneratePhrases()
+{
+    const markdown = `
+# 👋🥰 Hi there,
+
+I'm your self-care assistant.  
+In order to do my job, I need to configure myself.
+
+**I'll have to access OpenAI for a second...**  
+**Would you like to do that now?**
+`;
+
+    const shouldGenerate = await div({
+        html: md(markdown),
+        enter: 'Yes Please!',
+        shortcuts: [
+            { key: 'N', name: 'Not right now!', value: 'N', bar: 'right', onPress() { submit('N'); } },
+        ]
+    });
+
+    if (shouldGenerate === 'N') exit();
+}

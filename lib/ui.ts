@@ -115,3 +115,8 @@ export async function multiArg(
 
     return selectedValues;
 }
+
+export function codeblock(code: string, language = ''): string
+{
+    return `\`\`\`${ language }\n${ code }\n\`\`\``;
+}
