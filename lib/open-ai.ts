@@ -27,7 +27,9 @@ export interface ChatCompletionState
     fullText: string;
 }
 
-export async function createChatCompletionStream(params: ChatCompletionParams, { next, error, complete }: Observer<ChatCompletionState>): Promise<void>
+type CompletionObserver = Partial<Omit<Observer<ChatCompletionState>, 'complete'>> & { complete: (fullText: string) => void };
+
+export async function createChatCompletionStream(params: ChatCompletionParams, { next, error, complete }: CompletionObserver): Promise<void>
 {
     const openAI = await initOpenAI();
 
@@ -83,7 +85,7 @@ export async function createChatCompletionStream(params: ChatCompletionParams, {
             }
         });
 
-        dataStreamer.on('end', complete);
+        dataStreamer.on('end', () => complete(fullContent));
     }
     catch (err)
     {
