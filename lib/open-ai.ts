@@ -38,7 +38,7 @@ export async function createChatCompletionStream(params: ChatCompletionParams, {
 
     try
     {
-        const { data } = await openAI.createChatCompletion({
+        const { data, request } = await openAI.createChatCompletion({
             messages,
             model: 'gpt-3.5-turbo',
             max_tokens: 1000,
@@ -49,6 +49,10 @@ export async function createChatCompletionStream(params: ChatCompletionParams, {
         const dataStreamer = data as any;
 
         let fullContent = '';
+
+        // If the user presses escape or closes the app, abort the request
+        // This avoids the request to continue running in the background or a ui that keeps popping up
+        onExit(() => request.abort());
 
         dataStreamer.on('data', async data =>
         {
