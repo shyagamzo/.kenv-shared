@@ -1,4 +1,5 @@
-// Name: Self Care Reminder
+// Preview: docs
+// Name: Self Care Assistant
 // Description: This script will remind you to take a break from the computer every now and then.
 // Author: Shy Agam
 // Twitter: @shyagam
@@ -7,35 +8,69 @@
 
 import '@johnlindquist/kit';
 import { getRandomItemFromArray } from '../lib/utils';
-import { createChatCompletionStream } from '../lib/open-ai';
+import { ChatCompletionState, createChatCompletionStream } from '../lib/open-ai';
 
-const storage = await db();
+const storage = await db({ selfCareReminders: [] });
 
 if (!storage.selfCareReminders?.length)
 {
-    let jsonString = '';
+    const shouldGenerate = await div({
+        html: md(`
+# 👋🥰 Hi there,
 
-    const aggregateJsonParts = (text: string) => jsonString += text;
-    const parseAndStorePhrases = async () => {
-        storage.selfCareReminders = JSON.parse(jsonString);
+I'm your self-care assistant.  
+In order to do my job, I need to configure myself.
+
+**I'll have to access OpenAI for a second...**  
+**Would you like to do that now?**
+        `.trim()),
+        shortcuts: [
+            { key: 'N', name: '[N]ot right now!', value: 'N', bar: 'right', onPress() { submit('N'); } },
+        ]
+    });
+
+    if (shouldGenerate === 'N')
+        exit();
+
+    const displayProgress = ({ fullText }: ChatCompletionState) =>
+    {
+        div(md(`
+# Generating motivational phrases...
+\`\`\`json
+${ fullText }
+\`\`\`
+        `));
+    }
+
+    setFooter('Generating motivational phrases. Please wait...');
+    displayProgress({ fullText: '', currentPart: '' });
+    setLoading(true);
+
+    const parseAndStorePhrases = async (fullText: string) =>
+    {
+        storage.selfCareReminders = JSON.parse(fullText).selfCareReminders;
 
         await storage.write();
+        
+        setFooter(`Generated ${ storage.selfCareReminders.length } phrases. Press Enter to confirm.`);
+        setLoading(false);
     };
 
-    const phrasesToProduce = 50;
+    const phrasesToProduce = 40;
     
     await createChatCompletionStream({
-        systemPrompt: `Act as a kind, friendly, empathic yet assertive assistant who wants to remind me to take care of my
-        body when I work. She will tell me things that will help me put focus on my current state so I can
-        improve my posture, take a break, notice if I'm stressed etc.
-        Her words are motivational and light. They don't push or force anything. They are more like suggestions
-        to take a moment and be concious.`,
-
-        prompt: `Generate ${phrasesToProduce} motivational phrases to help me take a moment and be concious.
-        Respond in the following plain JSON format: { selfCareReminders: ['phrase 1', 'phrase 2', ...., 'phrase 10'] }.
+        prompt: `Generate ${ phrasesToProduce} different phrases which can motivate me to reflect on my physical situation during my work time,
+        so I can take a moment to focus on myself and see if I need a break, to stretch, or a glass of water.
+        Make the phrases unintrusive, polite, suggestive and friendly.
+        Here are a couple of examples:
+        "How are you feeling right now?"
+        "What does your body tell you?"
+        
+        Respond in the following plain JSON format: { selfCareReminders: [...the phrases] }.
+        Use 2 spaces for indentation.
         Only respond with the JSON. Nothing else.
         `
-    }, {next: aggregateJsonParts, complete: parseAndStorePhrases });
+    }, { next: displayProgress, complete: parseAndStorePhrases });
 }
 
 notify({
