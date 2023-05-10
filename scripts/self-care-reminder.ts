@@ -78,7 +78,7 @@ In order to do my job, I need to configure myself.
         html: md(markdown),
         enter: 'Yes Please!',
         shortcuts: [
-            { key: 'N', name: 'Not right now!', bar: 'right', onPress() { submit('N'); } },
+            { key: 'N', name: 'Not right now', bar: 'right', onPress() { submit('N'); } },
         ]
     });
 
