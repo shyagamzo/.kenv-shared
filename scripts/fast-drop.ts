@@ -22,8 +22,8 @@ const width = 300;
 const height = 500;
 const xMargin = 25;
 const yMargin = xMargin + 50; // Same distance as xMargin, but with a little extra for the Windows taskbar
-const x = screen.size.width - width - xMargin;
-const y = screen.size.height - height - yMargin;
+const x = (screen?.size.width ?? width) - width - xMargin;
+const y = (screen?.size.height ?? height) - height - yMargin;
 
 const baskets = new Map<string, DropBasket>();
 
@@ -117,7 +117,7 @@ async function createBasket(): Promise<DropBasket>
     return basket;
 }
 
-let basketHtml = null;
+let basketHtml: string | null = null;
 
 async function createDropBasketWidget(initialState?: CategorizedDropItems): Promise<WidgetAPI>
 {
@@ -144,6 +144,8 @@ function clearAll(): void
 
 function positionNewBasket(basket: DropBasket): void
 {
+    if (!screen) return;
+
     const basketsPerRow = Math.floor(screen.size.width / (width + xMargin));
     const index = Array.from(baskets.values()).indexOf(basket);
     const column = index % basketsPerRow + 1;
