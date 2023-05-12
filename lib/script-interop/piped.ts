@@ -1,8 +1,10 @@
 import type { z } from 'zod';
 
+export type SchemaErrorHandler = (error: z.ZodError) => void;
+
 export interface SchemaErrorHandling
 {
-    onSchemaError?: (error: z.ZodError) => void;
+    onSchemaError?: SchemaErrorHandler;
     exitOnSchemaError?: boolean;
 }
 
