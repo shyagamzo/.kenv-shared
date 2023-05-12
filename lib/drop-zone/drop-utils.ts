@@ -35,11 +35,11 @@ export function reduceCategorizedItems<Result>(
 
 export const pipedDragged = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => piped({ ExpectedSchema: DroppedDataSchema, ...schemaErrorHandling }, ...args);
 
-export const pipedFiles = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ files }) => files);
-export const pipedImages = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ images }) => images);
-export const pipedVideos = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ videos }) => videos);
-export const pipedApps = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ apps }) => apps);
-export const pipedTexts = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ texts }) => texts);
-export const pipedUris = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ uris }) => uris);
-export const pipedHtmls = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ htmls }) => htmls);
-export const pipedOthers = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ others }) => others);
+export const pipedFiles = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged(schemaErrorHandling, ...args).then(({ files }) => files);
+export const pipedImages = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged(schemaErrorHandling, ...args).then(({ images }) => images);
+export const pipedVideos = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged(schemaErrorHandling, ...args).then(({ videos }) => videos);
+export const pipedApps = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged(schemaErrorHandling, ...args).then(({ apps }) => apps);
+export const pipedTexts = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged(schemaErrorHandling, ...args).then(({ texts }) => texts);
+export const pipedUris = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged(schemaErrorHandling, ...args).then(({ uris }) => uris);
+export const pipedHtmls = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged(schemaErrorHandling, ...args).then(({ htmls }) => htmls);
+export const pipedOthers = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged(schemaErrorHandling, ...args).then(({ others }) => others);
