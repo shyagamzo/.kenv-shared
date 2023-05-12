@@ -1,4 +1,5 @@
-import { CategorizedDropItems, WidgetDropCategory, WidgetDropMessage } from '../types/widget.type';
+import { CategorizedDropItems, DroppedDataSchema, WidgetDropCategory, WidgetDropMessage } from '../types/widget.type';
+import { SchemaErrorHandling, piped } from '../script-interop/piped';
 
 export function dropHandler(process: (data: CategorizedDropItems, targetId: string) => void | Promise<void>): (message: WidgetDropMessage) => Promise<void>
 {
@@ -10,7 +11,7 @@ export function dropHandler(process: (data: CategorizedDropItems, targetId: stri
 
         if (!categories.length)
         {
-            notify({ title: '📥 Drop Basket', message: 'Nothing recognized recognized.' });
+            notify({ title: '📥 Drop Basket', message: 'Nothing recognized.' });
 
             return;
         }
@@ -31,3 +32,14 @@ export function reduceCategorizedItems<Result>(
         .entries(data)
         .reduce((result, [category, items]) => reducer(result, category as WidgetDropCategory, items), initial as Result);
 }
+
+export const pipedDragged = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => piped({ ExpectedSchema: DroppedDataSchema, ...schemaErrorHandling }, ...args);
+
+export const pipedFiles = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ files }) => files);
+export const pipedImages = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ images }) => images);
+export const pipedVideos = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ videos }) => videos);
+export const pipedApps = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ apps }) => apps);
+export const pipedTexts = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ texts }) => texts);
+export const pipedUris = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ uris }) => uris);
+export const pipedHtmls = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ htmls }) => htmls);
+export const pipedOthers = (schemaErrorHandling?: SchemaErrorHandling, ...args: Parameters<typeof arg>) => pipedDragged().then(({ others }) => others);
