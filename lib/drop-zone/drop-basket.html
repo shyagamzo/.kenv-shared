@@ -7,7 +7,7 @@
          :key="category"
          :data-category="category">
 
-        <div v-for="(itemsInfo, mime) in groupByMime(items)"
+         <div v-for="(itemsInfo, mime) in groupByMime(items)"
              :key="mime"
              :data-mimeItemsInfo="itemsInfo">
 
@@ -43,6 +43,8 @@
     const emojifyCategory = (category) => ({
         'files': '📄',
         'images': '🖼️',
+        'videos': '🎥',
+        'apps': '⚙️',
         'texts': '📝',
         'htmls': '💻',
         'uris': '🔗',
@@ -64,6 +66,8 @@
         {
             case 'files':
             case 'images':
+            case 'videos':
+            case 'apps':
                 return `${info.name} (${info.size} bytes)`;
             case 'texts':
             case 'htmls':
