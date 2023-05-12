@@ -33,7 +33,7 @@ const speechStream = new (class SpeechQueue
 
         const delimiterMatch = this.feed.match(delimiters);
 
-        if (delimiterMatch)
+        if (delimiterMatch && delimiterMatch.index)
         {
             const delimiterIndex = delimiterMatch.index;
 
@@ -64,8 +64,10 @@ const speechStream = new (class SpeechQueue
 
         const textToSpeak = this.textQueue.shift();
 
-        this.waitForSpeechEnd(textToSpeak);
+        if (!textToSpeak) return;
+
         sayIt(textToSpeak);
+        this.waitForSpeechEnd(textToSpeak);
     }
 
     private waitForSpeechEnd(text: string): void
@@ -89,7 +91,7 @@ const speechStream = new (class SpeechQueue
     }
 })({
     waitForDelimiter: 4000,
-    estimatedWordsPerMinute: 185
+    estimatedWordsPerMinute: 175
 });
 
 export function sayIt(text: string): ReturnType<typeof say>
