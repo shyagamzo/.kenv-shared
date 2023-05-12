@@ -7,7 +7,7 @@
 import '@johnlindquist/kit';
 import { WidgetAPI, WidgetOptions } from '@johnlindquist/kit/types/pro';
 
-import type { CategorizedDropItems, WidgetDropCategory } from '../lib/types/widget.type';
+import type { CategorizedDropItems } from '../lib/types/widget.type';
 
 import { BasketState, DropBasket } from '../lib/drop-zone/drop-basket';
 import { dropHandler } from '../lib/drop-zone/drop-utils';
@@ -42,9 +42,8 @@ dropZone.onDrop(dropHandler(async (data, targetId) =>
 {
     if (targetId === 'pipe')
     {
-        // await pipeItems(category, items);
-        
-    }   
+        await pipeItems(data);   
+    }
     else if (targetId === 'collect')
     {
         const basket = await createBasket();
@@ -65,19 +64,7 @@ onExit(() =>
     clearAll();
 });
 
-const pathableCategories = ['files', 'images', 'texts', 'uris'] as const satisfies readonly WidgetDropCategory[];
-type PathableCategory = Extract<WidgetDropCategory, typeof pathableCategories[number]>;
-
-function isPathableCategory(category: WidgetDropCategory): category is PathableCategory
-{
-    return pathableCategories.includes(category as any);
-}
-
-// Converters from drop info to string args for the script
-type Piper<Category extends WidgetDropCategory> = (items: CategorizedDropItems[Category]) => string[];
-type Pipers = { [k in WidgetDropCategory]: Piper<k> };
-
-async function pipeItems<Category extends WidgetDropCategory>(category: Category, items: CategorizedDropItems[Category])
+async function pipeItems(items: CategorizedDropItems)
 {
     const scripts = await getScripts(true);
 
@@ -87,22 +74,7 @@ async function pipeItems<Category extends WidgetDropCategory>(category: Category
         value: name
     })));
 
-    const stringConverter: Piper<'texts' | 'uris' | 'htmls'> = (items) => items.map(({ info }) => info);
-    const pathConverter: Piper<'files' | 'images'> = (items) => items.map(({ info }) => info.path);
-    const jsonConverter: Piper<'others'> = (items) => items.map(({ info }) => JSON.stringify(info));
-
-    const pipers: Pipers = {
-        files: pathConverter,
-        images: pathConverter,
-
-        texts: stringConverter,
-        uris: stringConverter,
-        htmls: stringConverter,
-
-        others: jsonConverter
-    };
-
-    await run(script, ...pipers[category](items));
+    await run(script, JSON.stringify(items));
 }
 
 async function createBasket(): Promise<DropBasket>
