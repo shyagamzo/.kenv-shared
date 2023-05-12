@@ -1,5 +1,6 @@
 import type { Choice, Script } from '@johnlindquist/kit';
 import type { TsFilePath } from './types/paths.types';
+import { codeblock } from './ui';
 
 export function identity<T>(value: T): T { return value; }
 
@@ -86,13 +87,7 @@ export async function highlightScript(script: Script, language: string = 'ts'): 
 {
     const scriptContent = await readFile(script.filePath, 'utf-8');
 
-    const markdown = `
-\`\`\`${ language }
-
-${ scriptContent }
-
-\`\`\`
-    `;
+    const markdown = codeblock(scriptContent, language);
 
     return highlight(md(markdown, 'p-0 m-0 h-full w-full'), 'h-full w-full');
 }
