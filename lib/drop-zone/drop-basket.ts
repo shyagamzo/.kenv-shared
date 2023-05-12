@@ -1,6 +1,6 @@
-import { WidgetAPI } from '@johnlindquist/kit/types/pro';
+import type { WidgetAPI } from '@johnlindquist/kit/types/pro';
 
-import type { CategorizedDropItems, WidgetDropCategory, WidgetDropTypesMap } from '../types/widget.type';
+import type { CategorizedDropItems, WidgetDropCategory } from '../types/widget.type';
 import { dropHandler, reduceCategorizedItems } from './drop-utils';
 
 export type BasketState = { content: CategorizedDropItems };
@@ -45,9 +45,7 @@ export class DropBasket
         const newData = reduceCategorizedItems(data, (result, category, items) =>
         {
             // Not sure why TS can't infer these types. It didn't infer them inside an if block either.
-            result[category as string] = category === 'files' || category === 'images'
-                ? aggregateFilesNoDuplicates(result, category, items as CategorizedDropItems['files' | 'images'])
-                : aggregateItemsNoDuplicates(result, category, items);
+            result[category] = aggregateItemsNoDuplicates(result, category, items);
             
             return result;
         }, this._data);
@@ -56,17 +54,9 @@ export class DropBasket
     }
 }
 
-function aggregateItemsNoDuplicates<Category extends Exclude<WidgetDropCategory, 'files' | 'images'>>(result: CategorizedDropItems, category: Category, items: CategorizedDropItems[Category]): CategorizedDropItems[Category]
+function aggregateItemsNoDuplicates<Category extends WidgetDropCategory>(existing: CategorizedDropItems, category: Category, items: CategorizedDropItems[Category]): CategorizedDropItems[Category]
 {
-    return [...new Set([...result[category], ...items])] as CategorizedDropItems[Category];
-}
+    if (!items) return;
 
-function aggregateFilesNoDuplicates<Category extends 'files' | 'images'>(existing: CategorizedDropItems, category: Category, items: CategorizedDropItems[Category]): CategorizedDropItems[Category]
-{
-    const existingItems = (existing[category] ?? []) as CategorizedDropItems[Category];
-
-    return [
-        ...existingItems,
-        ...items.filter(({ info: newInfo }) => existingItems.every(({ info: existingInfo }) => newInfo.path !== existingInfo.path))
-    ] as CategorizedDropItems[Category];
+    return _.unionWith(existing[category], items, _.isEqual) as CategorizedDropItems[Category];
 }
