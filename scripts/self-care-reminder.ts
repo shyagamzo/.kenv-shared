@@ -13,8 +13,19 @@ import { codeblock } from '../lib/ui';
 
 const storage = await db({ selfCareReminders: [] });
 
-if (!storage.selfCareReminders?.length)
+(async () => {
+    await ensurePhrasesExist();
+
+    notify({
+        title: "🥰 Self Care Reminder",
+        message: getRandomItemFromArray(storage.selfCareReminders)
+    });
+})();
+
+async function ensurePhrasesExist(): Promise<void>
 {
+    if (storage.selfCareReminders?.length) return;
+
     await ensureUserWantsToGeneratePhrases();
 
     const displayProgress = ({ fullText }: ChatCompletionState) =>
@@ -56,11 +67,6 @@ ${ codeblock(fullText) }
         `
     }, { next: displayProgress, complete: parseAndStorePhrases });
 }
-
-notify({
-    title: "🥰 Self Care Reminder",
-    message: getRandomItemFromArray(storage.selfCareReminders)
-});
 
 async function ensureUserWantsToGeneratePhrases()
 {
