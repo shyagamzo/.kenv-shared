@@ -68,10 +68,10 @@ async function pipeItems(items: CategorizedDropItems)
 {
     const scripts = await getScripts(true);
 
-    const script = await arg('Where do you want to pipe the files to?', scripts.map(({ name, description }) => ({
+    const script = await arg('Where do you want to pipe the files to?', scripts.map(({ name, description, command }) => ({
         name,
         description,
-        value: name
+        value: command
     })));
 
     await run(script, JSON.stringify(items));
