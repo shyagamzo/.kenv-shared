@@ -1,5 +1,4 @@
 import { Choice, PromptConfig } from '@johnlindquist/kit/types/core';
-import { identity } from './utils';
 
 type MultiSelectConfig = {
     styleSelected?: <T>(choice: Choice<T>) => string;
@@ -15,7 +14,7 @@ export async function multiArg(
             <span class="mr-2">${ emoji }</span>
             <div class="flex flex-col max-w-full overflow-x-hidden max-h-full">
                 <div class="text-base truncate"><span>${ name }</span></div>
-                <div class="pb-1 truncate text-xs opacity-60"><span>${ description }</span></div>
+                ${ description ? `<div class="pb-1 truncate text-xs opacity-60"><span>${ description }</span></div>` : '' }
             </div>
         </div>
     `;
@@ -29,7 +28,9 @@ export async function multiArg(
     let selectedChoiceIds = new Set<string>();
     let selecting = true;
 
-    if (typeof placeholderOrConfig === 'string')
+    if (!placeholderOrConfig)
+        placeholderOrConfig = { placeholder: 'Select one or more items' };
+    else if (typeof placeholderOrConfig === 'string')
         placeholderOrConfig = { placeholder: placeholderOrConfig };
 
     const patchedOptions = {
@@ -114,9 +115,4 @@ export async function multiArg(
     const selectedValues = [...selectedChoiceIds.values()].map(id => choicesById.get(id)).map(choice => choice.value);
 
     return selectedValues;
-}
-
-export function codeblock(code: string, language = ''): string
-{
-    return `\`\`\`${ language }\n${ code }\n\`\`\``;
 }
