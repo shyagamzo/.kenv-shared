@@ -17,7 +17,6 @@ export async function piped<Schema extends z.Schema>({ ExpectedSchema, onSchemaE
 {
     const value = await arg(...args);
 
-    debugger;
     if (ExpectedSchema.safeParse(value).success) return value as Schema;
 
     try
