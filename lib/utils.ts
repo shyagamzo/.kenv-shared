@@ -1,6 +1,6 @@
 import type { Choice, Script } from '@johnlindquist/kit';
 import type { TsFilePath } from './types/paths.types';
-import { codeblock } from './ui';
+import { codeblock } from "./ui/codeblock";
 
 export function identity<T>(value: T): T { return value; }
 

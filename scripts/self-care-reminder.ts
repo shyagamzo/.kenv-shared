@@ -9,7 +9,7 @@
 import '@johnlindquist/kit';
 import { getRandomItemFromArray } from '../lib/utils';
 import { ChatCompletionState, createChatCompletionStream } from '../lib/open-ai';
-import { codeblock } from '../lib/ui';
+import { codeblock } from "../lib/ui/codeblock";
 
 const storage = await db({ selfCareReminders: [] });
 

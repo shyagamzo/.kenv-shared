@@ -8,8 +8,8 @@ import '@johnlindquist/kit';
 import { extractDependenciesRecursively, toLibFilePath } from '../lib/dependency-graph';
 import { scriptChoices } from '../lib/utils';
 import { TsFilePath } from '../lib/types/paths.types';
-import { pulseGlow, fadeIn, bounce } from '../lib/ux';
-import { multiArg } from '../lib/ui';
+import { pulseGlow, fadeIn, bounce } from '../lib/ui/animation';
+import { multiArg } from '../lib/ui/multi-arg';
 
 type GistFilesRecord = Record<string, { content: string }>;
 
