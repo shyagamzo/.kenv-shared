@@ -2,7 +2,6 @@
 // Description: A drop zone that allows you to quickly pipe files to a script or collect them in a basket.
 // Author: Shy Agam
 // Twitter: @shyagam
-// Shortcut: ctrl shift home
 
 import '@johnlindquist/kit';
 import { WidgetAPI, WidgetOptions } from '@johnlindquist/kit/types/pro';
