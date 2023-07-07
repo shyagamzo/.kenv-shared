@@ -1,4 +1,5 @@
 import '@johnlindquist/kit';
+import _ from 'lodash';
 
 const speechStream = new (class SpeechQueue
 {

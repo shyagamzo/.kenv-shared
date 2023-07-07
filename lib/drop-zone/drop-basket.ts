@@ -1,4 +1,5 @@
 import type { WidgetAPI } from '@johnlindquist/kit/types/pro';
+import _ from 'lodash';
 
 import type { CategorizedDropItems, WidgetDropCategory } from '../types/widget.type';
 import { dropHandler, reduceCategorizedItems } from './drop-utils';

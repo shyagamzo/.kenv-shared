@@ -1,4 +1,5 @@
 import { Choice, PromptConfig } from '@johnlindquist/kit/types/core';
+import _ from 'lodash';
 
 type MultiSelectConfig = {
     styleSelected?: <T>(choice: Choice<T>) => string;
