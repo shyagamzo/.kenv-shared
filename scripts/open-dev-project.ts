@@ -5,7 +5,7 @@
 import '@johnlindquist/kit';
 import { Choice } from '@johnlindquist/kit';
 
-const ignoredFolders = [
+const ignoredFolders = new Set([
     'node_modules',
     'dist',
     'build',
@@ -19,7 +19,7 @@ const ignoredFolders = [
     'tmp',
     'temp',
     'logs'
-];
+]);
 
 async function getProjects(parentDir: string): Promise<Choice<string>[]>
 {
@@ -28,7 +28,7 @@ async function getProjects(parentDir: string): Promise<Choice<string>[]>
 
     for (const dir of codeDir)
     {
-        if (ignoredFolders.some(ignored => dir.includes(ignored))) continue;
+        if (ignoredFolders.has(dir)) continue;
 
         const fullPath = path.join(parentDir, dir);
         const packageJsonPath = path.join(fullPath, 'package.json');
