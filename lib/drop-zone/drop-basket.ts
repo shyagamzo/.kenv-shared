@@ -1,6 +1,5 @@
-import type { WidgetAPI } from '@johnlindquist/kit/types/pro';
 import _ from 'lodash';
-
+import type { WidgetAPI } from '@johnlindquist/kit/types/pro';
 import type { CategorizedDropItems, WidgetDropCategory } from '../types/widget.type';
 import { dropHandler, reduceCategorizedItems } from './drop-utils';
 
@@ -15,11 +14,6 @@ export class DropBasket
     constructor(public readonly widget: WidgetAPI)
     {    
         widget.onDrop(dropHandler((data) => this.addItems(data)));
-    
-        widget.onMouseDown(({  }) =>
-        {
-        
-        });
     
         widget.onClose(this.destroy.bind(this));
     }

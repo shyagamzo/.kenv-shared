@@ -20,7 +20,10 @@
                 <li class="py-1 cursor-pointer"
                     v-for="(itemInfo, index) in itemsInfo"
                     :key="itemInfo"
-                    :data-itemInfo="itemInfo" :title="tooltipFor(itemInfo)">
+                    :data-itemInfo="itemInfo"
+                    :title="tooltipFor(itemInfo)"
+                    draggable="true"
+                    @dragstart="onItemDragging($event, mime, itemInfo)">
                     {{emojifyCategory(category)}} {{elipsis(displayItem(category, itemInfo))}}
                 </li>
             </ul>
@@ -79,4 +82,8 @@
         }
     };
 
+    const onItemDragging = (event, mime, itemInfo) =>
+    {
+        event.dataTransfer.setData(mime, JSON.stringify(itemInfo));
+    };
 </script>
