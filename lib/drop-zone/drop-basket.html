@@ -1,5 +1,5 @@
 <div class="h-full" style="gap: 1.5rem">
-    <h1 class="text-center" contenteditable="true">🧺</h1>
+    <h1 class="text-center" draggable="true" @dragstart="onBasketDragging($event, content)">🧺 Drop Basket</h1>
 
     <div class="overflow-auto"
          v-for="(items, category) in content"
@@ -82,8 +82,17 @@
         }
     };
 
-    const onItemDragging = (event, mime, itemInfo) =>
+    const setDragData = (event, mime, itemInfo) =>
     {
         event.dataTransfer.setData(mime, JSON.stringify(itemInfo));
+    };
+
+    const onItemDragging = (event, mime, itemInfo) => setDragData(event, mime, itemInfo);
+
+    const onBasketDragging = (event, content) =>
+    {
+        for (const [category, items] of Object.entries(content))
+            for (const { mime, info } of items)
+                setDragData(event, mime, info);
     };
 </script>

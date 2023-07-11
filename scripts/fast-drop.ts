@@ -45,9 +45,7 @@ dropZone.onDrop(dropHandler(async (data, targetId) =>
     }
     else if (targetId === 'collect')
     {
-        const basket = await createBasket();
-
-        basket.addItems(data);
+        await createBasket(data);
     }
 }));
 
@@ -76,12 +74,13 @@ async function pipeItems(items: CategorizedDropItems)
     await run(script, JSON.stringify(items));
 }
 
-async function createBasket(): Promise<DropBasket>
+async function createBasket(data: CategorizedDropItems): Promise<DropBasket>
 {
     const widget = await createDropBasketWidget();
-    const basket = new DropBasket(widget);
-
+    const basket = new DropBasket(widget, data);
+        
     baskets.set(basket.id, basket);
+    basket.widget.onClose(() => baskets.delete(basket.id));
 
     positionNewBasket(basket);
 

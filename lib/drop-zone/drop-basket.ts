@@ -11,11 +11,12 @@ export class DropBasket
 
     public readonly id: string = uuid();
     
-    constructor(public readonly widget: WidgetAPI)
+    constructor(public readonly widget: WidgetAPI, data?: CategorizedDropItems)
     {    
         widget.onDrop(dropHandler((data) => this.addItems(data)));
-    
         widget.onClose(this.destroy.bind(this));
+
+        if (data) this.data = data;
     }
 
     public destroy(): void
